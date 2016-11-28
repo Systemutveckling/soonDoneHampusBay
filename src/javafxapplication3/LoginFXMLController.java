@@ -7,6 +7,10 @@ package javafxapplication3;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,6 +44,35 @@ public class LoginFXMLController implements Initializable {
         Scene scene = new Scene(root);
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.setScene(scene);
+
+    }
+    
+        @FXML
+    private void login(ActionEvent event) throws IOException {
+     
+//             try{
+//        Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/thehampusdatabase?useSSL=false","root","root");
+//        Statement myStmt = myConn.createStatement();
+//        ResultSet myRs = myStmt.executeQuery("Select * from användare\n" +
+//"where användare.Email = 'abovepants@gmail.com' and användare.Användarnamn = 'abovepants' and Användare.lösenord = 123");
+//        //ResultSet genre = myStmt.executeQuery("Select * from genre");
+//        while(myRs.next()){
+//            
+//            System.out.println(myRs.getString("Namn"));
+//             
+//           
+//            
+//            
+//           
+//        }
+//
+//        
+//       
+//        }catch(Exception exc){
+//            
+//        exc.printStackTrace();
+//        }
+        
 
     }
     
