@@ -7,6 +7,11 @@ package javafxapplication3;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,9 +35,10 @@ public class FirstPageDocumentController implements Initializable {
   
      @FXML
     private ListView allInfo;
+     @FXML
+    private TextField sök;         
      
-     
-        ObservableList x = FXCollections.observableArrayList(BankLogic.getInstance().getAllNames());
+        ObservableList x = FXCollections.observableArrayList();
     @FXML
     private void loginPage(ActionEvent event) throws IOException {
        Parent root= FXMLLoader.load(getClass().getResource("LoginFXML.fxml"));        
@@ -49,16 +55,61 @@ public class FirstPageDocumentController implements Initializable {
         stage.setScene(scene);
         
     }
+      @FXML
+        private void sök(ActionEvent event) {
+            x.clear();
+             try{
+        Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/thehampusdatabase?useSSL=false","root","root");
+        Statement myStmt = myConn.createStatement();
+        ResultSet myRs = myStmt.executeQuery("select filer.Namn,kategori.Kategori,genre.Genre,filer.Storlek\n" +
+"from användare,filer,kategori,genre\n" +
+"where användare.Användarnamn like filer.Användare_Användarnamn and kategori.Kategori_id = filer.Kategori_Kategori_id and genre.idGenre = filer.Genre_idGenre;");
+        //ResultSet genre = myStmt.executeQuery("Select * from genre");
+        while(myRs.next()){
+            
+            if(myRs.getString("Namn").equalsIgnoreCase(sök.getText())){
+            x.add(myRs.getString("Kategori") +"              " +  myRs.getString("Genre") + "            "  + myRs.getString("Namn") + "           " + myRs.getString("Storlek") + "MB");
+            allInfo.setItems(x);
+            }
+            
+           
+        }
+        
+        if(sök.getText().isEmpty()){
+        getDatabaseOriginal();
+        }
+        
+       
+        }catch(Exception exc){
+            
+        exc.printStackTrace();
+        }
+        
+         
+        
+    }
  
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        x.add("PC            " + "                      Action "     +    "                    Battlefield1     "      +          "           7GB");
-        x.add("PC            " + "                      Action "     +    "                    Battlefield1     "      +          "           7GB");
-        x.add("PC            " + "                      Action "     +    "                    Battlefield1     "      +          "           7GB");
-        x.add("PC            " + "                      Action "     +    "                    Battlefield1     "      +          "           7GB");
-        x.add("PC            " + "                      Action "     +    "                    Battlefield1     "      +          "           7GB");
-        
-        allInfo.setItems(x);
+  getDatabaseOriginal();
     }    
-    
+    public void getDatabaseOriginal(){
+              try{
+        Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/thehampusdatabase?useSSL=false","root","root");
+        Statement myStmt = myConn.createStatement();
+        ResultSet myRs = myStmt.executeQuery("select filer.Namn,kategori.Kategori,genre.Genre,filer.Storlek\n" +
+"from användare,filer,kategori,genre\n" +
+"where användare.Användarnamn like filer.Användare_Användarnamn and kategori.Kategori_id = filer.Kategori_Kategori_id and genre.idGenre = filer.Genre_idGenre;");
+        //ResultSet genre = myStmt.executeQuery("Select * from genre");
+        while(myRs.next()){
+            x.add(myRs.getString("Kategori") +"              " +  myRs.getString("Genre") + "            "  + myRs.getString("Namn") + "           " + myRs.getString("Storlek") + "MB");
+        }
+        
+       
+        }catch(Exception exc){
+            
+        exc.printStackTrace();
+        }
+        allInfo.setItems(x);
+    }
 }
