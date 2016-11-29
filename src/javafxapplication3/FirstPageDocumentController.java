@@ -22,6 +22,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -37,8 +38,18 @@ public class FirstPageDocumentController implements Initializable {
     private ListView allInfo;
      @FXML
     private TextField sök;         
-     
+     @FXML
+    private Button laddauppfil;
+     @FXML
+    private Button Minafiler;
+     @FXML
+     private Button loggaut;
+     @FXML
+     private Button register;
+     @FXML
+     private Button Login;
         ObservableList x = FXCollections.observableArrayList();
+
     @FXML
     private void loginPage(ActionEvent event) throws IOException {
        Parent root= FXMLLoader.load(getClass().getResource("LoginFXML.fxml"));        
@@ -48,6 +59,15 @@ public class FirstPageDocumentController implements Initializable {
         
     }
         @FXML
+        private void minafiler(ActionEvent event) throws IOException {
+       Parent root= FXMLLoader.load(getClass().getResource("Minafiler.fxml"));        
+        Scene scene = new Scene(root);
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        
+    }
+    
+        @FXML
     private void registerPage(ActionEvent event) throws IOException {
        Parent root= FXMLLoader.load(getClass().getResource("Register.fxml"));        
         Scene scene = new Scene(root);
@@ -55,11 +75,23 @@ public class FirstPageDocumentController implements Initializable {
         stage.setScene(scene);
         
     }
+       @FXML
+    private void loggaut(ActionEvent event) throws IOException {
+       if(LoginAuth.getInstance().isLoggedIn()){
+        Minafiler.setVisible(false);
+        laddauppfil.setVisible(false);
+        loggaut.setVisible(false);
+        register.setVisible(true);
+        Login.setVisible(true);
+        }
+        
+    }
+    
       @FXML
         private void sök(ActionEvent event) {
             x.clear();
              try{
-        Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/thehampusdatabase?useSSL=false","root","root");
+        Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/hampusbay?useSSL=false","root","root");
         Statement myStmt = myConn.createStatement();
         ResultSet myRs = myStmt.executeQuery("select filer.Namn,kategori.Kategori,genre.Genre,filer.Storlek\n" +
 "from användare,filer,kategori,genre\n" +
@@ -91,11 +123,23 @@ public class FirstPageDocumentController implements Initializable {
  
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        if(!LoginAuth.getInstance().isLoggedIn()){
+        Minafiler.setVisible(false);
+        laddauppfil.setVisible(false);
+        loggaut.setVisible(false);
+        }
+        
+        if(LoginAuth.getInstance().isLoggedIn()){
+        register.setVisible(false);
+        Login.setVisible(false);
+        }
+        
   getDatabaseOriginal();
+  
     }    
     public void getDatabaseOriginal(){
               try{
-        Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/thehampusdatabase?useSSL=false","root","root");
+        Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/hampusbay?useSSL=false","root","root");
         Statement myStmt = myConn.createStatement();
         ResultSet myRs = myStmt.executeQuery("select filer.Namn,kategori.Kategori,genre.Genre,filer.Storlek\n" +
 "from användare,filer,kategori,genre\n" +

@@ -21,25 +21,24 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 /**
  * FXML Controller class
  *
- * @author skate
+ * @author Hampus
  */
-
-public class LoginFXMLController implements Initializable {
+public class MinafilerController implements Initializable {
     
     @FXML
-    private TextField username;
+    ListView minafiler;
+            
     
-    @FXML
-    private TextField password;
-    @FXML
+        ObservableList x = FXCollections.observableArrayList();
+            @FXML
+            
+            
     private void back(ActionEvent event) throws IOException {
         Parent root= FXMLLoader.load(getClass().getResource("FirstPageDocument.fxml"));        
         Scene scene = new Scene(root);
@@ -47,37 +46,33 @@ public class LoginFXMLController implements Initializable {
         stage.setScene(scene);
 
     }
-    
-        @FXML
-    private void login(ActionEvent event) throws IOException {
         
-             try{
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+                     try{
         Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/hampusbay?useSSL=false","root","root");
         Statement myStmt = myConn.createStatement();
-        ResultSet myRs = myStmt.executeQuery("Select * from användare\n" +
-"where Användarnamn = '"+username.getText()+ "' and lösenord =" + password.getText());
+        ResultSet myRs = myStmt.executeQuery(query());
         //ResultSet genre = myStmt.executeQuery("Select * from genre");
         while(myRs.next()){
-            if(username.getText().equalsIgnoreCase(myRs.getString("användarnamn")) && password.getText().equals(myRs.getString("lösenord"))){
-            System.out.println(myRs.getString("Namn"));
-            LoginAuth.getInstance().setUsername(myRs.getString("Användarnamn"));
-            LoginAuth.getInstance().setPassword(myRs.getString("Lösenord"));
-            }
-             
+            x.add(myRs.getString("namn")+ "                 " +  myRs.getString("Genre") + "             " +myRs.getString("Kategori") + "        " + myRs.getString("Storlek") + "MB");
         }
-        LoginAuth.getInstance().setLoggedIn(true);
+        
        
         }catch(Exception exc){
             
         exc.printStackTrace();
         }
-
+        minafiler.setItems(x);
+    }
+        
+        
+public String query(){
+    return ("Select filer.Namn,genre.Genre,filer.Storlek,kategori.Kategori from användare,filer,genre,kategori\n" +
+"where användare.Användarnamn = '"+LoginAuth.getInstance().getUsername()+"' and genre.idGenre = filer.Genre_idGenre and Användare.Email = filer.Användare_Email and kategori.Kategori_id = filer.Kategori_Kategori_id and användare.lösenord = 123;");
+}
+            
     }
     
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-       
-        
-    }    
     
-}
+
